@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const expect = require('chai');
 const socket = require('socket.io');
-
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner.js');
 
@@ -13,12 +12,6 @@ app.use('/assets', express.static(process.cwd() + '/assets'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Index page (static HTML)
-app.route('/')
-  .get(function (req, res) {
-    res.sendFile(process.cwd() + '/views/index.html');
-  });
 
 app.use((req, res, next) => {
   res.set({
@@ -33,6 +26,12 @@ app.use((req, res, next) => {
   });
   next();
 });
+
+// Index page (static HTML)
+app.route('/')
+  .get(function (req, res) {
+    res.sendFile(process.cwd() + '/views/index.html');
+  });
 
 //For FCC testing purposes
 fccTestingRoutes(app);
