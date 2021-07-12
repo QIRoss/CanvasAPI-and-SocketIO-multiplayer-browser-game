@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const expect = require('chai');
 const socket = require('socket.io');
 
@@ -12,14 +11,28 @@ const app = express();
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use('/assets', express.static(process.cwd() + '/assets'));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Index page (static HTML)
 app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/views/index.html');
-  }); 
+  });
+
+app.use((req, res, next) => {
+  res.set({
+    "Access-Control-Allow-Origin" : "*",
+    'x-content-type-options'  : 'nosniff',
+    'x-xss-protection'  : '1; mode=block',
+    'surrogate-control':  'no-store',
+    'cache-control':  'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'pragma'  : 'no-cache',
+    'expires' : '0',
+    'x-powered-by'  : 'PHP 7.4.3'
+  });
+  next();
+});
 
 //For FCC testing purposes
 fccTestingRoutes(app);
